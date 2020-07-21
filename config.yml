@@ -1,0 +1,12 @@
+name: chat
+server:
+  port:
+    http: 9092
+    grpc: 9093
+#
+## 依赖模块
+#modules:
+#  seaweed:
+#    masterUrl: http://192.168.0.184:7222
+#  um:
+#    grpcAddr: 192.168.0.110:9001
