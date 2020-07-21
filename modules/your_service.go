@@ -21,6 +21,6 @@ func (*service) Echo(ctx context.Context, req  *api.StringMessage) (*api.StringM
 
 	return &api.StringMessage{
 		Value:                req.Value,
-	}, status.Error(codes.Unknown, "err")
+	}, status.Error(codes.Unknown, "这是一个错误，出错啦")
 }
 

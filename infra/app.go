@@ -35,7 +35,7 @@ func NewApp() *App {
 	grpcAddr := fmt.Sprintf(":%v", Config.Server.Port.GRPC)
 	httpAddr := fmt.Sprintf(":%v", Config.Server.Port.HTTP)
 
-	grpcServer := grpc.NewServer(grpc_middleware.WithUnaryServerChain(RecoveryInterceptor, LoggingInterceptor))
+	grpcServer := grpc.NewServer(grpc_middleware.WithUnaryServerChain(RecoveryInterceptor, LoggingInterceptor, ValidateInterceptor))
 
 	serveMux := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}))
 	//ServeMux := runtime.NewServeMux()

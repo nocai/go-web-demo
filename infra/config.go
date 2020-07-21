@@ -57,6 +57,7 @@ func parse() {
 		panic(err)
 	}
 
+	// Note: 配置文件里的敏感信息不要打印出来
 	glog.Warning("==============================CONFIG==============================")
 	bytes, err := json.MarshalIndent(Config, "", "    ")
 	if err != nil {

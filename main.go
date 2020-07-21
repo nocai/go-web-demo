@@ -6,6 +6,7 @@ import (
 	"github.com/nocai/go-web-demo/api"
 	"github.com/nocai/go-web-demo/infra"
 	"github.com/nocai/go-web-demo/modules"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -23,13 +24,16 @@ func init() {
 	glog.Infof("BuildTime: %v", BuildTime)
 }
 
-// 日志用glog -log_dir="/tmp/log/emm -alsologtostderr -stderrthreshold=INFO
+// 日志用glog
+//
+// -log_dir="logs"
 // -alsologtostderr -stderrthreshold=INFO
 func main() {
 	//退出时，确保日志写入文件中
 	defer glog.Flush()
 
 	app := infra.NewApp()
+	grpc.RoundRobin()
 
 	var (
 		yourServiceServer = modules.NewYourServiceServer()

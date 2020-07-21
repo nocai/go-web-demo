@@ -12,12 +12,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var validate = validator.New()
 
 func LoggingInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	glog.Info("==============================START==============================")
 	glog.Infof("%s", info.FullMethod)
-	glog.Infof("req = %v", req)
+	glog.Infof("req = { %v }", req)
 
 	var (
 		resp interface{}
@@ -28,21 +27,13 @@ func LoggingInterceptor(ctx context.Context, req interface{}, info *grpc.UnarySe
 		if err != nil {
 			glog.Errorf("err = %v", err)
 		}
-		glog.Infof("resp = %v", resp)
+		glog.Infof("resp = { %v }", resp)
 		glog.Info("===============================END===============================")
 	}(time.Now())
-
-	if err = validate.Struct(req); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
 
 	resp, err = handler(ctx, req)
 	if err != nil {
 		return resp, err
-	}
-
-	if err = validate.Struct(resp); err != nil {
-		return nil, status.Error(codes.DataLoss, err.Error())
 	}
 
 	return resp, err
@@ -57,4 +48,28 @@ func RecoveryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryS
 	}()
 
 	return handler(ctx, req)
+}
+
+var validate = validator.New()
+
+func ValidateInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	var (
+		resp interface{}
+		err  error
+	)
+
+	if err = validate.Struct(req); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	resp, err = handler(ctx, req)
+	if err != nil {
+		return resp, err
+	}
+
+	if err = validate.Struct(resp); err != nil {
+		return nil, status.Error(codes.Unknown, err.Error())
+	}
+
+	return resp, err
 }
