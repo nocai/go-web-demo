@@ -1,4 +1,4 @@
-name: chat
+name: go-web-demo
 server:
   port:
     http: 9092

@@ -3,21 +3,25 @@ package infra
 import (
 	"context"
 	"fmt"
-	"github.com/golang/glog"
-	"github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"golang.org/x/sync/errgroup"
-	"google.golang.org/grpc"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/golang/glog"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc"
 )
 
+// App application
 type App struct {
 	errC chan error
-	Ctx  context.Context
+
+	Ctx        context.Context
+	CancelFunc context.CancelFunc
 
 	GRPCAddr string
 	httpAddr string
@@ -28,32 +32,38 @@ type App struct {
 	DialOptions []grpc.DialOption
 }
 
+// NewApp new App
 func NewApp() *App {
 	// 解配置文件
 	parse()
+
+	errC := make(chan error)
+	ctx, cancel := context.WithCancel(context.Background())
 
 	grpcAddr := fmt.Sprintf(":%v", Config.Server.Port.GRPC)
 	httpAddr := fmt.Sprintf(":%v", Config.Server.Port.HTTP)
 
 	grpcServer := grpc.NewServer(grpc_middleware.WithUnaryServerChain(RecoveryInterceptor, LoggingInterceptor, ValidateInterceptor))
 
+	//serveMux := runtime.NewServeMux()
 	serveMux := runtime.NewServeMux(runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}))
-	//ServeMux := runtime.NewServeMux()
 
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 
 	return &App{
-		errC:     make(chan error),
+		errC:     errC,
 		httpAddr: httpAddr,
 
 		GRPCAddr:    grpcAddr,
-		Ctx:         context.Background(),
+		Ctx:         ctx,
+		CancelFunc:  cancel,
 		GRPCServer:  grpcServer,
 		ServeMux:    serveMux,
 		DialOptions: opts,
 	}
 }
 
+// Run run app
 func (app *App) Run() error {
 	app.start()
 
@@ -109,5 +119,7 @@ func (app *App) start() {
 
 func (app *App) stop() {
 	glog.Info("stop()")
+
+	app.CancelFunc()
 	app.GRPCServer.Stop()
 }

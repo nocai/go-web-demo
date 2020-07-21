@@ -2,16 +2,19 @@ package main
 
 import (
 	"flag"
+
 	"github.com/golang/glog"
 	"github.com/nocai/go-web-demo/api"
 	"github.com/nocai/go-web-demo/infra"
 	"github.com/nocai/go-web-demo/modules"
-	"google.golang.org/grpc"
 )
 
 var (
-	Version   = "-"
-	GitHash   = "-"
+	// Version version
+	Version = "-"
+	// GitHash git hash
+	GitHash = "-"
+	// BuildTime build time
 	BuildTime = "-"
 )
 
@@ -33,7 +36,6 @@ func main() {
 	defer glog.Flush()
 
 	app := infra.NewApp()
-	grpc.RoundRobin()
 
 	var (
 		yourServiceServer = modules.NewYourServiceServer()
