@@ -15,19 +15,19 @@ import (
 
 func LoggingInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	glog.Info("==============================START==============================")
-	glog.Infof("%s", info.FullMethod)
-	glog.Infof("req = { %v }", req)
+	glog.Infof("method = %s", info.FullMethod)
+	glog.Infof("req = %v", req)
 
 	var (
 		resp interface{}
 		err  error
 	)
 	defer func(start time.Time) {
-		glog.Infof("%s, spent time: %v", info.FullMethod, time.Since(start))
+		glog.Infof("method = %s, spent time: %v", info.FullMethod, time.Since(start))
 		if err != nil {
 			glog.Errorf("err = %v", err)
 		}
-		glog.Infof("resp = { %v }", resp)
+		glog.Infof("resp = %v", resp)
 		glog.Info("===============================END===============================")
 	}(time.Now())
 

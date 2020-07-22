@@ -11,6 +11,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway v1.14.6
 	github.com/leodido/go-urn v1.2.0 // indirect
+	github.com/nocai/go-web-demo/api v0.0.0
 	github.com/sony/sonyflake v1.0.0
 	golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7 // indirect
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58
@@ -21,3 +22,5 @@ require (
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/yaml.v2 v2.3.0
 )
+
+replace github.com/nocai/go-web-demo/api => ./api

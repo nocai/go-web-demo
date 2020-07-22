@@ -9,7 +9,7 @@ protoc \
   -I$GOPATH/src/github.com/gogo/protobuf/protobuf \
   -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway \
   -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
-  --gogo_out=plugins=grpc:. \
+  --gogoslick_out=plugins=grpc:. \
   *.proto
 
 # 这个生成grpc-gateway

@@ -2,7 +2,6 @@ package modules
 
 import (
 	"context"
-
 	"github.com/golang/glog"
 	"github.com/nocai/go-web-demo/api"
 	"google.golang.org/grpc/codes"
